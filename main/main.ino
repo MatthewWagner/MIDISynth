@@ -85,7 +85,7 @@ struct voice {
 struct device {
   int mux;
   int pin;
-  int value;
+  int value = 0;
 };
 
 struct midiMessage {
@@ -105,6 +105,7 @@ void resetVoice(voice selectedVoice) {
 
 void readMidi();
 void readUI();
+void updateVoices();
 void vibrato();
 void mixing();
 void setOutputs();
@@ -128,6 +129,7 @@ for(int i = 0; i < numOutputDevices; i++) {
 
 void loop() {
   readUI();
+  updateVoices();
   readMidi();
   mixing();
   
@@ -146,6 +148,10 @@ void readUI() {
   }
 }
 
+void updateVoices() {
+  
+}
+
 void noteOn(midiMessage currentMessage) {
   int selectedVoice = 16;
   for(int i = numVoices; i > 0; i--) {
@@ -156,6 +162,13 @@ void noteOn(midiMessage currentMessage) {
         selectedVoice = i-1;
       }
     }
+  }
+  if(selectedVoice != 16) {
+    voices[selectedVoice].isOn = true;
+    voices[selectedVoice].note = currentMessage.note;
+    voices[selectedVoice].vel = currentMessage.velocity;
+    voices[selectedVoice].adsrPhase = a;
+    voices[selectedVoice].timeOn = millis();
   }
 }
 
