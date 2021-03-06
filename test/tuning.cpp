@@ -1,5 +1,6 @@
 // This program is a test for tuning a function generator with two digital potentiometers such as the MCP415X through a multiplexer.
 // Note: This includes code to make the test easily expandable to more digiPots through more multiplexers.
+
 // The circuit should be wired as follows.
 
 // Buttons: 
@@ -45,6 +46,7 @@
 
 #define muxSig 22
 
+#include <Arduino.h>
 #include <SPI.h>
 
 struct device {

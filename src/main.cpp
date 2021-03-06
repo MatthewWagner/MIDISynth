@@ -1,3 +1,5 @@
+#include <Arduino.h>
+
 //ADSR values
 #define off 0
 #define a 1

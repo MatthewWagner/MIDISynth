@@ -16,6 +16,7 @@
 // 7 P0A -> MM Probe
 // 8 VDD -> ground
 
+#include <Arduino.h>
 #include <SPI.h>
 
 void setup() {
