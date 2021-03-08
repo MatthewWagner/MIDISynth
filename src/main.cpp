@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <MIDI.h>
 
 //ADSR values
 #define off 0
@@ -105,7 +106,6 @@ void resetVoice(voice selectedVoice) {
   selectedVoice.timeReleased = 0;
 }
 
-void readMidi();
 void readUI();
 void updateVoices();
 void vibrato();
@@ -118,21 +118,23 @@ device inputDevices[numInputDevices];
 device outputDevices[numOutputDevices];
 
 void setup() {
-//init input devices
-for(int i = 0; i < numInputDevices; i++) {
-  inputDevices[i].pin = i%16;
-  inputDevices[i].mux = i/16;
-}
-for(int i = 0; i < numOutputDevices; i++) {
-  outputDevices[i].pin = i%16;
-  outputDevices[i].mux = i/16 + 1;
-}
+  //init Midi
+  MIDI_CREATE_DEFAULT_INSTANCE();
+  //init input devices
+  for(int i = 0; i < numInputDevices; i++) {
+    inputDevices[i].pin = i%16;
+    inputDevices[i].mux = i/16;
+  }
+  for(int i = 0; i < numOutputDevices; i++) {
+    outputDevices[i].pin = i%16;
+    outputDevices[i].mux = i/16 + 1;
+  }
 }
 
 void loop() {
   readUI();
   updateVoices();
-  readMidi();
+  MIDI.read();
   mixing();
   
 }
@@ -156,12 +158,12 @@ void updateVoices() {
 
 void noteOn(midiMessage currentMessage) {
   int selectedVoice = 16;
-  for(int i = numVoices; i > 0; i--) {
-    if(voices[i-1].ch == currentMessage.channel) {
-      if(!(voices[i-1].isOn)) { //voice is off
-        selectedVoice = i-1;
-      } else if(voices[i-1].adsrPhase == r && selectedVoice != 16) { //voice is in release phase
-        selectedVoice = i-1;
+  for(int i = numVoices - 1; i >= 0; i--) {
+    if(voices[i].ch == currentMessage.channel) {
+      if(!(voices[i].isOn)) { //voice is off
+        selectedVoice = i;
+      } else if(voices[i].adsrPhase == r && selectedVoice != 16) { //voice is in release phase
+        selectedVoice = i;
       }
     }
   }
@@ -175,10 +177,10 @@ void noteOn(midiMessage currentMessage) {
 }
 
 void noteOff(midiMessage currentMessage) {
-  for(int i = numVoices; i > 0; i--) {
-    if(voices[i-1].ch == currentMessage.channel && voices[i-1].note == currentMessage.note) {
-      voices[i-1].adsrPhase = r;
-      voices[i-1].timeReleased = millis();
+  for(int i = numVoices - 1; i >= 0; i--) {
+    if(voices[i].ch == currentMessage.channel && voices[i].note == currentMessage.note) {
+      voices[i].adsrPhase = r;
+      voices[i].timeReleased = millis();
     }
   }
 }

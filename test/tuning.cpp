@@ -61,17 +61,17 @@ device digiPot2;
 void updateDigiPot(device selectedDevice);
 
 void setup() {
-SPI.begin();
-Serial.begin(9600);
-pinMode(INPUT_PULLUP, 29);
-pinMode(INPUT_PULLUP, 30);
-pinMode(INPUT_PULLUP, 31);
-pinMode(INPUT_PULLUP, 32);
-digiPot1.mux = 1;
-digiPot1.pin = 0;
+    SPI.begin();
+    Serial.begin(9600);
+    pinMode(INPUT_PULLUP, 29);
+    pinMode(INPUT_PULLUP, 30);
+    pinMode(INPUT_PULLUP, 31);
+    pinMode(INPUT_PULLUP, 32);
+    digiPot1.mux = 1;
+    digiPot1.pin = 0;
 
-digiPot2.mux = 1;
-digiPot2.pin = 1;
+    digiPot2.mux = 1;
+    digiPot2.pin = 1;
 }
 
 void loop() {
